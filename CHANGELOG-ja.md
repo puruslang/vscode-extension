@@ -1,6 +1,6 @@
 # Changelog
 
-Purus の構文・仕様・予約語に関する変更履歴です。
+Purus VS Code 拡張機能（otoneko1102.purus）の変更履歴。
 
 ---
 
