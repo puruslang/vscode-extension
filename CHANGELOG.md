@@ -4,6 +4,16 @@ Change history for the Purus VS Code extension (`otoneko1102.purus`).
 
 ---
 
+## v1.0.1 (2026-06-26)
+
+### Bug Fixes
+
+- Fixed logo URL in README (now references puruslang/assets)
+- Fixed LICENSE link in README-ja.md
+- Added permissions: contents: write to release workflow
+
+---
+
 ## v1.0.0 (2026-06-26)
 
 ### Initial Release

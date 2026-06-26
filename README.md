@@ -1,6 +1,6 @@
 <div align="center">
 
-[![Logo](https://raw.githubusercontent.com/puruslang/vscode-extension/refs/heads/main/logo.png)](https://purus.work)
+[![Logo](https://raw.githubusercontent.com/puruslang/assets/main/logo.png)](https://purus.work)
 
 **English** | [日本語](https://github.com/puruslang/vscode-extension/blob/main/README-ja.md)
 

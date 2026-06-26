@@ -1,6 +1,6 @@
 <div align="center">
 
-[![Logo](https://raw.githubusercontent.com/puruslang/vscode-extension/refs/heads/main/logo.png)](https://purus.work)
+[![Logo](https://raw.githubusercontent.com/puruslang/assets/main/logo.png)](https://purus.work)
 
 [English](https://github.com/puruslang/vscode-extension#readme) | **日本語**
 
@@ -77,4 +77,4 @@ otoneko. https://github.com/otnc
 
 ## ライセンス
 
-Apache 2.0 ライセンスに基づいて配布されます。詳細については、[LICENSE](https://raw.githubusercontent.com/puruslang/vscode-extension/refs/heads/main/LICENSE) を参照してください。
+Apache 2.0 ライセンスに基づいて配布されます。詳細については、[LICENSE](https://github.com/puruslang/vscode-extension/blob/main/LICENSE) を参照してください。

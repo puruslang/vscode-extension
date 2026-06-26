@@ -4,6 +4,16 @@ Purus VS Code 拡張機能（`otoneko1102.purus`）の変更履歴。
 
 ---
 
+## v1.0.1 (2026-06-26)
+
+### バグ修正
+
+- README のロゴ URL を修正（puruslang/assets を参照するように）
+- README-ja.md の LICENSE リンクを修正
+- リリースワークフローに permissions: contents: write を追加
+
+---
+
 ## v1.0.0 (2026-06-26)
 
 ### 初回リリース
