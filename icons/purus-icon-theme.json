@@ -1,0 +1,15 @@
+{
+  "iconDefinitions": {
+    "_purus": {
+      "iconPath": "./purus-icon-light.svg"
+    }
+  },
+  "languageIds": {
+    "purus": "_purus"
+  },
+  "fileExtensions": {
+    "purus": "_purus",
+    "cpurus": "_purus",
+    "mpurus": "_purus"
+  }
+}

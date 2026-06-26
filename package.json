@@ -1,0 +1,91 @@
+{
+  "name": "purus",
+  "displayName": "Purus",
+  "description": "Purus language support — syntax highlighting, snippets, and file icons",
+  "version": "1.0.0",
+  "publisher": "otoneko1102",
+  "license": "Apache-2.0",
+  "scripts": {
+    "build": "vsce package",
+    "publish": "vsce publish"
+  },
+  "devDependencies": {
+    "@vscode/vsce": "^3.0.0"
+  },
+  "main": "./src/extension.js",
+  "activationEvents": [
+    "onLanguage:purus"
+  ],
+  "engines": {
+    "vscode": "^1.80.0",
+    "node": ">=22"
+  },
+  "categories": [
+    "Programming Languages",
+    "Snippets"
+  ],
+  "icon": "icon.png",
+  "homepage": "https://purus.work",
+  "keywords": [
+    "purus",
+    "altjs",
+    "lang",
+    "language",
+    "noshift"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/puruslang/vscode-extension"
+  },
+  "contributes": {
+    "languages": [
+      {
+        "id": "purus",
+        "aliases": [
+          "Purus",
+          "purus"
+        ],
+        "extensions": [
+          ".purus",
+          ".cpurus",
+          ".mpurus"
+        ],
+        "configuration": "./language-configuration.json",
+        "icon": {
+          "light": "./icons/purus-icon-light.svg",
+          "dark": "./icons/purus-icon-dark.svg"
+        }
+      }
+    ],
+    "grammars": [
+      {
+        "language": "purus",
+        "scopeName": "source.purus",
+        "path": "./syntaxes/purus.tmLanguage.json"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "purus",
+        "path": "./snippets/purus.json"
+      }
+    ],
+    "iconThemes": [
+      {
+        "id": "purus-icons",
+        "label": "Purus File Icons (supplement)",
+        "path": "./icons/purus-icon-theme.json"
+      }
+    ],
+    "keybindings": [
+      {
+        "key": "/",
+        "command": "purus.surroundSlash",
+        "when": "editorTextFocus && editorHasSelection && editorLangId == 'purus'"
+      }
+    ]
+  },
+  "bugs": {
+    "url": "https://github.com/puruslang/vscode-extension/issues"
+  }
+}

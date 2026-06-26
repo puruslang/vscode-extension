@@ -1,0 +1,371 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "Purus",
+  "scopeName": "source.purus",
+  "patterns": [
+    { "include": "#shebang" },
+    { "include": "#comment-block" },
+    { "include": "#comment-line" },
+    { "include": "#string-bracket" },
+    { "include": "#string" },
+    { "include": "#regex" },
+    { "include": "#number" },
+    { "include": "#declaration" },
+    { "include": "#class" },
+    { "include": "#function" },
+    { "include": "#control-flow" },
+    { "include": "#module" },
+    { "include": "#operator" },
+    { "include": "#type-keyword" },
+    { "include": "#constant" },
+    { "include": "#other-keyword" },
+    { "include": "#support" },
+    { "include": "#punctuation" },
+    { "include": "#identifier" }
+  ],
+  "repository": {
+    "shebang": {
+      "match": "\\A#!.*$",
+      "name": "comment.line.shebang.purus"
+    },
+    "comment-line": {
+      "match": "--(?!-).*$",
+      "name": "comment.line.double-dash.purus"
+    },
+    "comment-block": {
+      "begin": "---",
+      "end": "---",
+      "name": "comment.block.purus"
+    },
+    "string-bracket": {
+      "begin": "//;",
+      "end": ";//",
+      "name": "string.quoted.semicolon.purus",
+      "patterns": [
+        {
+          "match": "\\\\[nt\\\\/\\[\\]]",
+          "name": "constant.character.escape.purus"
+        },
+        {
+          "begin": "\\[",
+          "end": "\\]",
+          "beginCaptures": {
+            "0": { "name": "punctuation.definition.interpolation.begin.purus" }
+          },
+          "endCaptures": {
+            "0": { "name": "punctuation.definition.interpolation.end.purus" }
+          },
+          "name": "meta.interpolation.purus",
+          "patterns": [
+            { "include": "source.purus" }
+          ]
+        }
+      ]
+    },
+    "string": {
+      "begin": "///",
+      "end": "///",
+      "name": "string.quoted.triple-slash.purus",
+      "patterns": [
+        {
+          "match": "\\\\[nt\\\\/\\[\\]]",
+          "name": "constant.character.escape.purus"
+        },
+        {
+          "begin": "\\[",
+          "end": "\\]",
+          "beginCaptures": {
+            "0": { "name": "punctuation.definition.interpolation.begin.purus" }
+          },
+          "endCaptures": {
+            "0": { "name": "punctuation.definition.interpolation.end.purus" }
+          },
+          "name": "meta.interpolation.purus",
+          "patterns": [
+            { "include": "source.purus" }
+          ]
+        }
+      ]
+    },
+    "regex": {
+      "match": "(?<=[=\\[,;\\s])(/(?![/\\*])(?:[^/\\\\\\n]|\\\\.)+/[gimsuy]*)",
+      "captures": {
+        "1": { "name": "string.regexp.purus" }
+      }
+    },
+    "number": {
+      "patterns": [
+        {
+          "match": "(?<![a-zA-Z0-9_])0[bB][01]+n(?![a-zA-Z0-9_])",
+          "name": "constant.numeric.bigint.purus"
+        },
+        {
+          "match": "(?<![a-zA-Z0-9_])0[xX][0-9a-fA-F]+n(?![a-zA-Z0-9_])",
+          "name": "constant.numeric.bigint.purus"
+        },
+        {
+          "match": "\\b(?!0[xXbB])\\d+n\\b",
+          "name": "constant.numeric.bigint.purus"
+        },
+        {
+          "match": "(?<![a-zA-Z0-9_])0[bB][01]+(?![a-zA-Z0-9_])",
+          "name": "constant.numeric.binary.purus"
+        },
+        {
+          "match": "(?<![a-zA-Z0-9_])0[xX][0-9a-fA-F]+(?![a-zA-Z0-9_])",
+          "name": "constant.numeric.hex.purus"
+        },
+        {
+          "match": "\\b\\d+\\.\\d+\\b",
+          "name": "constant.numeric.float.purus"
+        },
+        {
+          "match": "\\b(?!0[xXbB])\\d+\\b",
+          "name": "constant.numeric.integer.purus"
+        }
+      ]
+    },
+    "declaration": {
+      "match": "(?<![a-zA-Z0-9_-])(const|let|var)(?![a-zA-Z0-9_-])",
+      "name": "storage.type.purus"
+    },
+    "class": {
+      "patterns": [
+        {
+          "match": "(?<![a-zA-Z0-9_-])(class)\\s+([a-zA-Z_][a-zA-Z0-9_-]*)\\s+(extends)\\s+([a-zA-Z_][a-zA-Z0-9_-]*)",
+          "captures": {
+            "1": { "name": "storage.type.class.purus" },
+            "2": { "name": "entity.name.type.class.purus" },
+            "3": { "name": "storage.modifier.extends.purus" },
+            "4": { "name": "entity.other.inherited-class.purus" }
+          }
+        },
+        {
+          "match": "(?<![a-zA-Z0-9_-])(class)\\s+([a-zA-Z_][a-zA-Z0-9_-]*)",
+          "captures": {
+            "1": { "name": "storage.type.class.purus" },
+            "2": { "name": "entity.name.type.class.purus" }
+          }
+        },
+        {
+          "match": "(?<![a-zA-Z0-9_-])(extends)\\s+([a-zA-Z_][a-zA-Z0-9_-]*)",
+          "captures": {
+            "1": { "name": "storage.modifier.extends.purus" },
+            "2": { "name": "entity.other.inherited-class.purus" }
+          }
+        },
+        {
+          "match": "(?<![a-zA-Z0-9_-])(static|private|protected)(?![a-zA-Z0-9_-])",
+          "name": "storage.modifier.purus"
+        },
+        {
+          "match": "(?<![a-zA-Z0-9_-])(get|set)\\s+(fn|function)\\s+([a-zA-Z_][a-zA-Z0-9_-]*)",
+          "captures": {
+            "1": { "name": "storage.modifier.accessor.purus" },
+            "2": { "name": "storage.type.function.purus" },
+            "3": { "name": "entity.name.function.purus" }
+          }
+        },
+        {
+          "match": "(?<![a-zA-Z0-9_-])(super)(?![a-zA-Z0-9_-])",
+          "name": "variable.language.super.purus"
+        }
+      ]
+    },
+    "function": {
+      "patterns": [
+        {
+          "match": "(?<![a-zA-Z0-9_-])(static)\\s+(async)\\s+(fn|function)\\s+([a-zA-Z_][a-zA-Z0-9_-]*)",
+          "captures": {
+            "1": { "name": "storage.modifier.purus" },
+            "2": { "name": "storage.modifier.async.purus" },
+            "3": { "name": "storage.type.function.purus" },
+            "4": { "name": "entity.name.function.purus" }
+          }
+        },
+        {
+          "match": "(?<![a-zA-Z0-9_-])(static)\\s+(fn|function)\\s+([a-zA-Z_][a-zA-Z0-9_-]*)",
+          "captures": {
+            "1": { "name": "storage.modifier.purus" },
+            "2": { "name": "storage.type.function.purus" },
+            "3": { "name": "entity.name.function.purus" }
+          }
+        },
+        {
+          "match": "(?<![a-zA-Z0-9_-])(async)\\s+(fn|function)\\s+([a-zA-Z_][a-zA-Z0-9_-]*)",
+          "captures": {
+            "1": { "name": "storage.modifier.async.purus" },
+            "2": { "name": "storage.type.function.purus" },
+            "3": { "name": "entity.name.function.purus" }
+          }
+        },
+        {
+          "match": "(?<![a-zA-Z0-9_-])(fn|function)\\s+(new)(?![a-zA-Z0-9_-])",
+          "captures": {
+            "1": { "name": "storage.type.function.purus" },
+            "2": { "name": "keyword.other.purus" }
+          }
+        },
+        {
+          "match": "(?<![a-zA-Z0-9_-])(fn|function)\\s+([a-zA-Z_][a-zA-Z0-9_-]*)(?=\\s+[a-zA-Z_]|\\s*$|\\s+to(?![a-zA-Z0-9_-]))",
+          "captures": {
+            "1": { "name": "storage.type.function.purus" },
+            "2": { "name": "entity.name.function.purus" }
+          }
+        },
+        {
+          "match": "(?<![a-zA-Z0-9_-])(fn|function)(?![a-zA-Z0-9_-])",
+          "name": "storage.type.function.purus"
+        }
+      ]
+    },
+    "control-flow": {
+      "patterns": [
+        {
+          "match": "(?<![a-zA-Z0-9_-])(if|elif|else|unless|then)(?![a-zA-Z0-9_-])",
+          "name": "keyword.control.conditional.purus"
+        },
+        {
+          "match": "(?<![a-zA-Z0-9_-])(while|until|do|for|in|range)(?![a-zA-Z0-9_-])",
+          "name": "keyword.control.loop.purus"
+        },
+        {
+          "match": "(?<![a-zA-Z0-9_-])(switch|case|match|when)(?![a-zA-Z0-9_-])",
+          "name": "keyword.control.match.purus"
+        },
+        {
+          "match": "(?<![a-zA-Z0-9_-])(try|catch|finally)(?![a-zA-Z0-9_-])",
+          "name": "keyword.control.trycatch.purus"
+        },
+        {
+          "match": "(?<![a-zA-Z0-9_-])(return|break|continue|throw|yield)(?![a-zA-Z0-9_-])",
+          "name": "keyword.control.flow.purus"
+        }
+      ]
+    },
+    "module": {
+      "patterns": [
+        {
+          "match": "(?<![a-zA-Z0-9_-])(import|from|export|require|use|namespace|public|all|with)(?![a-zA-Z0-9_-])",
+          "name": "keyword.control.import.purus"
+        },
+        {
+          "match": "(?<![a-zA-Z0-9_-])(default)(?![a-zA-Z0-9_-])",
+          "name": "keyword.control.default.purus"
+        }
+      ]
+    },
+    "operator": {
+      "patterns": [
+        {
+          "match": "(?<![a-zA-Z0-9_-])(be|eq|to)(?![a-zA-Z0-9_-])",
+          "name": "keyword.operator.assignment.purus"
+        },
+        {
+          "match": "(?<![a-zA-Z0-9_-])(not|neq)(?![a-zA-Z0-9_-])",
+          "name": "keyword.operator.logical.purus"
+        },
+        {
+          "match": "(?<![a-zA-Z0-9_-])(add|sub|mul|div|fdiv|mod|neg|pow)(?![a-zA-Z0-9_-])",
+          "name": "keyword.control.arithmetic.purus"
+        },
+        {
+          "match": "(?<![a-zA-Z0-9_-])(lt|gt|le|ge)(?![a-zA-Z0-9_-])",
+          "name": "keyword.control.arithmetic.purus"
+        },
+        {
+          "match": "(?<![a-zA-Z0-9_-])(and|or)(?![a-zA-Z0-9_-])",
+          "name": "keyword.control.arithmetic.purus"
+        },
+        {
+          "match": "(?<![a-zA-Z0-9_-])(band|bor|bxor|bnot|shl|shr|ushr)(?![a-zA-Z0-9_-])",
+          "name": "keyword.control.arithmetic.purus"
+        },
+        {
+          "match": "(?<![a-zA-Z0-9_-])(coal)(?![a-zA-Z0-9_-])",
+          "name": "keyword.control.arithmetic.purus"
+        },
+        {
+          "match": "(?<![a-zA-Z0-9_-])(pipe)(?![a-zA-Z0-9_-])",
+          "name": "keyword.control.arithmetic.purus"
+        }
+      ]
+    },
+    "type-keyword": {
+      "match": "(?<![a-zA-Z0-9_-])(as|of|gives|typeof|instanceof|type)(?![a-zA-Z0-9_-])",
+      "name": "keyword.other.type.purus"
+    },
+    "constant": {
+      "patterns": [
+        {
+          "match": "(?<![a-zA-Z0-9_-])(true|false)(?![a-zA-Z0-9_-])",
+          "name": "constant.language.boolean.purus"
+        },
+        {
+          "match": "(?<![a-zA-Z0-9_-])(null|nil|undefined|nan|infinity)(?![a-zA-Z0-9_-])",
+          "name": "constant.language.purus"
+        }
+      ]
+    },
+    "other-keyword": {
+      "match": "(?<![a-zA-Z0-9_-])(new|delete|this|await|super|void|blank)(?![a-zA-Z0-9_-])",
+      "name": "keyword.other.purus"
+    },
+    "support": {
+      "match": "(?<![a-zA-Z0-9_-])(list|object)(?![a-zA-Z0-9_-])",
+      "name": "support.type.purus"
+    },
+    "punctuation": {
+      "patterns": [
+        {
+          "match": "\\\\\\.",
+          "name": "punctuation.accessor.optional.purus"
+        },
+        {
+          "match": "\\\\(?=[^\\s])",
+          "name": "punctuation.accessor.computed.purus"
+        },
+        {
+          "match": "\\[",
+          "name": "punctuation.bracket.open.purus"
+        },
+        {
+          "match": "\\]",
+          "name": "punctuation.bracket.close.purus"
+        },
+        {
+          "match": ",",
+          "name": "punctuation.separator.comma.purus"
+        },
+        {
+          "match": ";",
+          "name": "punctuation.separator.semicolon.purus"
+        },
+        {
+          "match": "\\.",
+          "name": "punctuation.accessor.purus"
+        }
+      ]
+    },
+    "identifier": {
+      "patterns": [
+        {
+          "match": "(?<=\\.)([a-zA-Z_][a-zA-Z0-9_-]*)(?=\\[)",
+          "name": "entity.name.function.method.purus"
+        },
+        {
+          "match": "([a-zA-Z_][a-zA-Z0-9_-]*)(?=\\[)",
+          "name": "entity.name.function.call.purus"
+        },
+        {
+          "match": "\\b[A-Z][a-zA-Z0-9_-]*\\b",
+          "name": "support.class.purus"
+        },
+        {
+          "match": "[a-zA-Z_][a-zA-Z0-9_-]*",
+          "name": "variable.other.purus"
+        }
+      ]
+    }
+  }
+}

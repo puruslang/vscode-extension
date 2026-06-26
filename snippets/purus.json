@@ -1,0 +1,241 @@
+{
+  "Function": {
+    "prefix": "fn",
+    "body": [
+      "fn ${1:name} ${2:params}",
+      "  ${0}"
+    ],
+    "description": "Function declaration"
+  },
+  "Function (expression)": {
+    "prefix": "fnt",
+    "body": "fn ${1:name} ${2:params} to ${0}",
+    "description": "Function with expression body"
+  },
+  "Async Function": {
+    "prefix": "afn",
+    "body": [
+      "async fn ${1:name} ${2:params}",
+      "  ${0}"
+    ],
+    "description": "Async function declaration"
+  },
+  "Const": {
+    "prefix": "const",
+    "body": "const ${1:name} be ${0}",
+    "description": "Constant declaration"
+  },
+  "Let": {
+    "prefix": "let",
+    "body": "let ${1:name} be ${0}",
+    "description": "Variable declaration"
+  },
+  "If": {
+    "prefix": "if",
+    "body": [
+      "if ${1:condition}",
+      "  ${0}"
+    ],
+    "description": "If statement"
+  },
+  "If-Else": {
+    "prefix": "ife",
+    "body": [
+      "if ${1:condition}",
+      "  ${2}",
+      "else",
+      "  ${0}"
+    ],
+    "description": "If-else statement"
+  },
+  "Unless": {
+    "prefix": "unless",
+    "body": [
+      "unless ${1:condition}",
+      "  ${0}"
+    ],
+    "description": "Unless statement"
+  },
+  "For-In": {
+    "prefix": "for",
+    "body": [
+      "for ${1:item} in ${2:items}",
+      "  ${0}"
+    ],
+    "description": "For-in loop"
+  },
+  "For-Range": {
+    "prefix": "forr",
+    "body": [
+      "for ${1:i} in range ${2:0}; ${3:10}",
+      "  ${0}"
+    ],
+    "description": "For-range loop"
+  },
+  "While": {
+    "prefix": "while",
+    "body": [
+      "while ${1:condition}",
+      "  ${0}"
+    ],
+    "description": "While loop"
+  },
+  "Until": {
+    "prefix": "until",
+    "body": [
+      "until ${1:condition}",
+      "  ${0}"
+    ],
+    "description": "Until loop"
+  },
+  "Switch": {
+    "prefix": "switch",
+    "body": [
+      "switch ${1:value}",
+      "  case ${2:pattern} then ${3:result}",
+      "  default ${0}"
+    ],
+    "description": "Switch expression"
+  },
+  "Match": {
+    "prefix": "match",
+    "body": [
+      "match ${1:value}",
+      "  when ${2:pattern} then ${3:result}",
+      "  else ${0}"
+    ],
+    "description": "Match expression (deprecated, use switch)"
+  },
+  "Function (to return)": {
+    "prefix": "fntr",
+    "body": "fn ${1:name} ${2:params} to return ${0}",
+    "description": "Function with explicit return expression body"
+  },
+  "Try-Catch": {
+    "prefix": "try",
+    "body": [
+      "try",
+      "  ${1}",
+      "catch ${2:e}",
+      "  ${0}"
+    ],
+    "description": "Try-catch block"
+  },
+  "Import": {
+    "prefix": "imp",
+    "body": "import ${1:module} from ///${2:path}///",
+    "description": "Import statement"
+  },
+  "Import (named)": {
+    "prefix": "impn",
+    "body": "import [${1:names}] from ///${2:path}///",
+    "description": "Named import"
+  },
+  "Export": {
+    "prefix": "public",
+    "body": "public ${0}",
+    "description": "Export (public)"
+  },
+  "Import (from)": {
+    "prefix": "from",
+    "body": "from ///${1:path}/// import ${0}",
+    "description": "Import (from...import)"
+  },
+  "Module": {
+    "prefix": "mod",
+    "body": [
+      "mod ${1:name}",
+      "  ${0}"
+    ],
+    "description": "Module namespace"
+  },
+  "Console Log": {
+    "prefix": "log",
+    "body": "console.log[${0}]",
+    "description": "console.log"
+  },
+  "Object Destructuring": {
+    "prefix": "objd",
+    "body": "const object[${1:names}] be ${0}",
+    "description": "Object destructuring"
+  },
+  "Nullish Coalescing": {
+    "prefix": "coal",
+    "body": "${1:value} coal ${0:default}",
+    "description": "Nullish coalescing (??)"
+  },
+  "Function (no args)": {
+    "prefix": "fn0",
+    "body": [
+      "fn ${1:name}",
+      "  ${0}"
+    ],
+    "description": "Function with no arguments"
+  },
+  "String Interpolation": {
+    "prefix": "stri",
+    "body": "///[${0}]///",
+    "description": "String with interpolation"
+  },
+  "Semicolon String": {
+    "prefix": "str",
+    "body": "//;${0};//",
+    "description": "Semicolon string //;...;// (preferred for URLs)"
+  },
+  "Semicolon String Interpolation": {
+    "prefix": "strs",
+    "body": "//;${1}[${0}]${2};//",
+    "description": "Semicolon string with interpolation"
+  },
+  "Use (stdlib)": {
+    "prefix": "use",
+    "body": "use ${1|math,json,string,random,datetime,object,number,array,error,regexp,promise,set,map|} as ${2:alias}",
+    "description": "Import stdlib module"
+  },
+  "Do-While": {
+    "prefix": "dowhile",
+    "body": [
+      "do",
+      "  ${1}",
+      "while ${0:condition}"
+    ],
+    "description": "Do-while loop"
+  },
+  "Yield": {
+    "prefix": "yield",
+    "body": "yield ${0:value}",
+    "description": "Yield expression (generator)"
+  },
+  "Generator Function": {
+    "prefix": "genfn",
+    "body": [
+      "fn ${1:name} ${2:params}",
+      "  yield ${0}"
+    ],
+    "description": "Generator function (uses yield)"
+  },
+  "Class": {
+    "prefix": "class",
+    "body": [
+      "class ${1:Name} ${2:extends ${3:Parent}}",
+      "  fn constructor ${4:params}",
+      "    ${0}"
+    ],
+    "description": "Class declaration"
+  },
+  "Postfix Increment": {
+    "prefix": "inc",
+    "body": "${1:x}\\add",
+    "description": "Postfix increment (x\\add → x++)"
+  },
+  "Postfix Decrement": {
+    "prefix": "dec",
+    "body": "${1:x}\\sub",
+    "description": "Postfix decrement (x\\sub → x--)"
+  },
+  "Floor Division": {
+    "prefix": "fdiv",
+    "body": "${1:a} fdiv ${2:b}",
+    "description": "Floor division (Math.floor(a / b))"
+  }
+}
