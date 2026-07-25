@@ -160,7 +160,6 @@ function analyzePurus(text) {
     const tok = sig[ti];
     const prev = ti > 0 ? sig[ti - 1] : null;
     const next = ti + 1 < sig.length ? sig[ti + 1] : null;
-    const next2 = ti + 2 < sig.length ? sig[ti + 2] : null;
     const tokEnd = tok.col + (tok.len || tok.value?.length || 1);
 
     // ---- ERRORS: Forbidden JS characters ----
@@ -183,84 +182,18 @@ function analyzePurus(text) {
       ));
     }
 
-    // ---- ERRORS: Removed keywords ----
-
-    // `is` — removed in v0.9.0
-    if (tok.type === "ident" && tok.value === "is" && prev &&
-      (prev.type === "ident" || prev.type === "number" || prev.type === "string" || prev.value === "]")) {
-      diagnostics.push(diag(
-        tok.line, tok.col, tok.line, tokEnd,
-        "`is` was removed in v0.9.0. Use `eq` instead",
-        vscode.DiagnosticSeverity.Error, "removed-is",
-        [vscode.DiagnosticTag.Deprecated]
-      ));
-    }
-
-    // `witch` — renamed to `switch` in v0.8.1
-    if (tok.type === "ident" && tok.value === "witch") {
-      diagnostics.push(diag(
-        tok.line, tok.col, tok.line, tokEnd,
-        "`witch` was renamed to `switch` in v0.8.1",
-        vscode.DiagnosticSeverity.Error, "removed-witch"
-      ));
-    }
-
-    // `pub` — replaced by `public` in v0.8.0
-    if (tok.type === "ident" && tok.value === "pub") {
-      diagnostics.push(diag(
-        tok.line, tok.col, tok.line, tokEnd,
-        "`pub` was replaced by `public` in v0.8.0",
-        vscode.DiagnosticSeverity.Error, "removed-pub"
-      ));
-    }
-
-    // `ne` as operator — renamed to `neq` in v0.4.0
-    if (tok.type === "ident" && tok.value === "ne" && prev &&
-      (prev.type === "ident" || prev.type === "number" || prev.type === "string" || prev.value === "]")) {
-      diagnostics.push(diag(
-        tok.line, tok.col, tok.line, tokEnd,
-        "`ne` was renamed to `neq` in v0.4.0. Use `neq` or `not eq`",
-        vscode.DiagnosticSeverity.Error, "removed-ne"
-      ));
-    }
-
     // ---- ERRORS: `use` statement validation ----
 
     if (tok.type === "keyword" && tok.value === "use") {
       if (next?.type === "ident") {
-        // `use <ident> . <ident>` — dot-path import (removed)
-        if (next2?.value === ".") {
-          const dotEnd = ti + 3 < sig.length ? sig[ti + 3] : next2;
-          diagnostics.push(diag(
-            tok.line, tok.col, dotEnd.line, dotEnd.col + (dotEnd.len || dotEnd.value?.length || 1),
-            "Dot-path import is removed. Use `use <module> as <name>`",
-            vscode.DiagnosticSeverity.Error, "removed-dotpath"
-          ));
-        }
         // `use <unknown> [as <name>]` — unknown stdlib module
-        else if (!STDLIB_MODULES.has(next.value)) {
+        if (!STDLIB_MODULES.has(next.value)) {
           diagnostics.push(diag(
             next.line, next.col, next.line, next.col + next.value.length,
             "Unknown stdlib module `" + next.value + "`. Available: " + [...STDLIB_MODULES].join(", "),
             vscode.DiagnosticSeverity.Error, "unknown-stdlib"
           ));
         }
-      }
-    }
-
-    // ---- ERRORS: `from ... use` (removed in v0.9.0) ----
-    if (tok.type === "keyword" && tok.value === "from") {
-      for (let j = ti + 1; j < Math.min(ti + 6, sig.length); j++) {
-        if (sig[j].type === "keyword" && sig[j].value === "use") {
-          diagnostics.push(diag(
-            tok.line, tok.col, sig[j].line, sig[j].col + 3,
-            "`from...use` is removed. Use `from ///mod/// import ...` or `use <module> as <name>`",
-            vscode.DiagnosticSeverity.Error, "removed-from-use"
-          ));
-          break;
-        }
-        if (sig[j].type === "keyword" && sig[j].value === "import") break;
-        if (sig[j].type === "keyword" && ["const", "let", "var", "fn", "if", "for", "while", "class"].includes(sig[j].value)) break;
       }
     }
 
