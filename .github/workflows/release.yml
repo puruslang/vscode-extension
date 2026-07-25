@@ -2,6 +2,11 @@ name: Publish VS Code Extension
 
 on:
   workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to release: a semver bump (patch/minor/major/prerelease) or an explicit version (e.g. 1.0.2)"
+        required: true
+        default: patch
   push:
     tags: ["v*"]
 
@@ -13,16 +18,49 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
       - name: Install dependencies
         run: npm install
+
+      - name: Bump version
+        if: github.event_name == 'workflow_dispatch'
+        id: bump
+        run: |
+          OLD="$(node -p "require('./package.json').version")"
+          npm version "${{ inputs.version }}" --no-git-tag-version --allow-same-version >/dev/null
+          NEW="$(node -p "require('./package.json').version")"
+          echo "version=v${NEW}" >> "$GITHUB_OUTPUT"
+          if [ "$OLD" = "$NEW" ]; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Version is already ${NEW}; skipping the bump commit but still releasing."
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Package and publish
         run: npx vsce publish
         env:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
+
+      - name: Commit, tag and push
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if [ "${{ steps.bump.outputs.changed }}" = "true" ]; then
+            git commit -am "release: ${{ steps.bump.outputs.version }}"
+          fi
+          if ! git rev-parse -q --verify "refs/tags/${{ steps.bump.outputs.version }}" >/dev/null; then
+            git tag "${{ steps.bump.outputs.version }}"
+          fi
+          git push origin HEAD "${{ steps.bump.outputs.version }}"
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ steps.bump.outputs.version || github.ref_name }}
           generate_release_notes: true
