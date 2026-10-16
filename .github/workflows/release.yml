@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: "Version to release: a semver bump (patch/minor/major/prerelease) or an explicit version (e.g. 1.0.2)"
+        description: "Version to release: a semver bump (patch/minor/major/prerelease) or an explicit version (e.g. 1.2.0)"
         required: true
         default: patch
   push:
@@ -16,22 +16,28 @@ permissions:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@v4
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          node-version: "22"
-      - name: Install dependencies
-        run: npm install
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run typecheck
+      - run: pnpm run test
 
       - name: Bump version
         if: github.event_name == 'workflow_dispatch'
         id: bump
+        env:
+          VERSION_INPUT: ${{ inputs.version }}
         run: |
           OLD="$(node -p "require('./package.json').version")"
-          npm version "${{ inputs.version }}" --no-git-tag-version --allow-same-version >/dev/null
+          npm version "$VERSION_INPUT" --no-git-tag-version --allow-same-version >/dev/null
           NEW="$(node -p "require('./package.json').version")"
           echo "version=v${NEW}" >> "$GITHUB_OUTPUT"
           if [ "$OLD" = "$NEW" ]; then
@@ -42,25 +48,28 @@ jobs:
           fi
 
       - name: Package and publish
-        run: npx vsce publish
+        run: pnpm run publish
         env:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
 
       - name: Commit, tag and push
         if: github.event_name == 'workflow_dispatch'
+        env:
+          VERSION: ${{ steps.bump.outputs.version }}
+          CHANGED: ${{ steps.bump.outputs.changed }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          if [ "${{ steps.bump.outputs.changed }}" = "true" ]; then
-            git commit -am "release: ${{ steps.bump.outputs.version }}"
+          if [ "$CHANGED" = "true" ]; then
+            git commit -am "release: $VERSION"
           fi
-          if ! git rev-parse -q --verify "refs/tags/${{ steps.bump.outputs.version }}" >/dev/null; then
-            git tag "${{ steps.bump.outputs.version }}"
+          if ! git rev-parse -q --verify "refs/tags/$VERSION" >/dev/null; then
+            git tag "$VERSION"
           fi
-          git push origin HEAD "${{ steps.bump.outputs.version }}"
+          git push origin HEAD "$VERSION"
 
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ steps.bump.outputs.version || github.ref_name }}
-          generate_release_notes: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.bump.outputs.version || github.ref_name }}
+        run: gh release create "$TAG" --title "$TAG" --generate-notes

@@ -1,0 +1,11 @@
+dist
+coverage
+node_modules
+pnpm-lock.yaml
+package-lock.json
+*.md
+syntaxes
+snippets
+icons
+language-configuration.json
+.private

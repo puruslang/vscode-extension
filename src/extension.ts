@@ -1,22 +1,52 @@
-const vscode = require('vscode');
-const { analyzePurus } = require('./analyzer');
+import * as vscode from "vscode";
+import { analyzePurus } from "./analyzer.js";
+import type { Finding, FindingTag, Severity } from "./analyzer.js";
 
-function activate(context) {
+const SEVERITY: Record<Severity, vscode.DiagnosticSeverity> = {
+  error: vscode.DiagnosticSeverity.Error,
+  warning: vscode.DiagnosticSeverity.Warning,
+  information: vscode.DiagnosticSeverity.Information,
+  hint: vscode.DiagnosticSeverity.Hint,
+};
+
+const TAG: Record<FindingTag, vscode.DiagnosticTag> = {
+  deprecated: vscode.DiagnosticTag.Deprecated,
+  unnecessary: vscode.DiagnosticTag.Unnecessary,
+};
+
+function toDiagnostic(finding: Finding): vscode.Diagnostic {
+  const diagnostic = new vscode.Diagnostic(
+    new vscode.Range(
+      finding.line,
+      finding.col,
+      finding.endLine,
+      finding.endCol
+    ),
+    finding.message,
+    SEVERITY[finding.severity]
+  );
+  diagnostic.source = "purus";
+  if (finding.code) diagnostic.code = finding.code;
+  if (finding.tags) diagnostic.tags = finding.tags.map((tag) => TAG[tag]);
+  return diagnostic;
+}
+
+export function activate(context: vscode.ExtensionContext): void {
   // Surround-slash command
   context.subscriptions.push(
     vscode.commands.registerTextEditorCommand(
-      'purus.surroundSlash',
+      "purus.surroundSlash",
       async (editor) => {
         const selection = editor.selection;
         if (selection.isEmpty) return;
 
         const text = editor.document.getText(selection);
 
-        if (text.startsWith('///') && text.endsWith('///')) {
+        if (text.startsWith("///") && text.endsWith("///")) {
           return;
         }
 
-        const wrapped = '/' + text + '/';
+        const wrapped = "/" + text + "/";
 
         const success = await editor.edit((editBuilder) => {
           editBuilder.replace(selection, wrapped);
@@ -35,30 +65,33 @@ function activate(context) {
   );
 
   // Diagnostics
-  const diagCollection = vscode.languages.createDiagnosticCollection('purus');
+  const diagCollection = vscode.languages.createDiagnosticCollection("purus");
   context.subscriptions.push(diagCollection);
 
-  let debounceTimer = null;
+  let debounceTimer: ReturnType<typeof setTimeout> | null = null;
 
-  function runDiagnostics(document) {
-    if (document.languageId !== 'purus') return;
-    diagCollection.set(document.uri, analyzePurus(document.getText()));
+  function runDiagnostics(document: vscode.TextDocument): void {
+    if (document.languageId !== "purus") return;
+    diagCollection.set(
+      document.uri,
+      analyzePurus(document.getText()).map(toDiagnostic)
+    );
   }
 
   context.subscriptions.push(
     vscode.workspace.onDidOpenTextDocument(runDiagnostics),
     vscode.workspace.onDidSaveTextDocument(runDiagnostics),
-    vscode.workspace.onDidChangeTextDocument(e => {
-      if (e.document.languageId !== 'purus') return;
+    vscode.workspace.onDidChangeTextDocument((e) => {
+      if (e.document.languageId !== "purus") return;
       if (debounceTimer) clearTimeout(debounceTimer);
       debounceTimer = setTimeout(() => runDiagnostics(e.document), 300);
     }),
-    vscode.workspace.onDidCloseTextDocument(doc => diagCollection.delete(doc.uri))
+    vscode.workspace.onDidCloseTextDocument((doc) =>
+      diagCollection.delete(doc.uri)
+    )
   );
 
   vscode.workspace.textDocuments.forEach(runDiagnostics);
 }
 
-function deactivate() {}
-
-module.exports = { activate, deactivate };
+export function deactivate(): void {}
