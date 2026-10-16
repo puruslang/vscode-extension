@@ -11,6 +11,7 @@ VS Code language support for Purus.
 ## Prerequisites
 
 - [Node.js](https://nodejs.org/) >= 22
+- [pnpm](https://pnpm.io/) (pinned in `packageManager`; `corepack enable` works)
 - [Git](https://git-scm.com/)
 
 ## Getting Started
@@ -18,16 +19,19 @@ VS Code language support for Purus.
 ```sh
 git clone https://github.com/puruslang/vscode-extension.git
 cd vscode-extension
-npm install
-npx vsce package
+pnpm install
+pnpm run package
 ```
 
 ## Development
 
 | Command | Description |
 |---|---|
-| `npx vsce package` | Build .vsix |
-| `npx vsce publish` | Publish to Marketplace |
+| `pnpm run build` | Bundle `src/` with tsdown into `dist/extension.cjs` |
+| `pnpm run typecheck` / `lint` / `format:check` | TypeScript 6, ESLint, Prettier |
+| `pnpm run test` | Vitest (the analyzer and tokenizer have no VS Code dependency; the extension entry is tested with a mocked `vscode`) |
+| `pnpm run package` | Build the .vsix |
+| `pnpm run publish` | Publish to the Marketplace (`VSCE_PAT`) |
 
 ## Submitting Pull Requests
 
@@ -38,7 +42,7 @@ npx vsce package
 
 ## Release
 
-Releases are triggered by pushing a `v*` tag (e.g., `v1.1.0`).
+Releases are triggered by the "Publish VS Code Extension" workflow (manual, with a version bump) or by pushing a `v*` tag (e.g., `v1.1.0`).
 
 ## Code of Conduct
 

@@ -11,6 +11,7 @@ VS Code language support for Purus.
 ## 必要な環境
 
 - [Node.js](https://nodejs.org/) >= 22
+- [pnpm](https://pnpm.io/)(版は `packageManager` で固定しています。`corepack enable` が使えます)
 - [Git](https://git-scm.com/)
 
 ## 始め方
@@ -18,16 +19,19 @@ VS Code language support for Purus.
 ```sh
 git clone https://github.com/puruslang/vscode-extension.git
 cd vscode-extension
-npm install
-npx vsce package
+pnpm install
+pnpm run package
 ```
 
 ## 開発
 
 | コマンド | 説明 |
 |---|---|
-| `npx vsce package` | .vsix のビルド |
-| `npx vsce publish` | Marketplace へ公開 |
+| `pnpm run build` | `src/` を tsdown で `dist/extension.cjs` にバンドル |
+| `pnpm run typecheck` / `lint` / `format:check` | TypeScript 6、ESLint、Prettier |
+| `pnpm run test` | Vitest |
+| `pnpm run package` | .vsix のビルド |
+| `pnpm run publish` | Marketplace へ公開(`VSCE_PAT`) |
 
 ## プルリクエストの提出
 
